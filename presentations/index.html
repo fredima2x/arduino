@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction Time Study - Research Presentation</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            color: #999;
+            font-size: 0.95em;
+            font-style: italic;
+        }
+
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-container h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        .data-table {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        .data-table h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table thead {
+            background: #f5f5f5;
+            border-bottom: 2px solid #667eea;
+        }
+
+        table th {
+            padding: 15px;
+            text-align: left;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            color: #666;
+        }
+
+        table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .gamer {
+            background: #e8f4fd;
+            font-weight: 500;
+        }
+
+        .non-gamer {
+            background: #fff5e8;
+            font-weight: 500;
+        }
+
+        .insights {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .insights h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .insight-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+        }
+
+        .insight-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .insight-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .insight-value {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            font-size: 0.9em;
+            margin-top: 40px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge-gamer {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge-non-gamer {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            padding: 40px;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 2em;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            table th, table td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="loading" class="loading">📊 Loading data...</div>
+        
+        <header id="header" style="display: none;">
+            <h1 id="title">🎯 Reaction Time Study</h1>
+            <p id="subtitle"></p>
+            <p class="subtitle" id="description"></p>
+        </header>
+
+        <div id="statsContainer" class="statistics" style="display: none;"></div>
+
+        <div id="chartsSection" class="charts-grid" style="display: none;">
+            <div class="chart-container">
+                <h2>📊 Distribution by Group</h2>
+                <div class="chart-wrapper">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h2>⚖️ Individual Comparison</h2>
+                <div class="chart-wrapper">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h2>📈 Average by Category</h2>
+                <div class="chart-wrapper">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h2>👥 Participant Distribution</h2>
+                <div class="chart-wrapper">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="dataTable" class="data-table" style="display: none;">
+            <h2>📋 Detailed Results</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Participant</th>
+                        <th>Group</th>
+                        <th>Reaction Time (ms)</th>
+                        <th>Performance</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+
+        <div id="insightsSection" class="insights" style="display: none;">
+            <h2>🔍 Statistical Insights</h2>
+            <div id="insightsContainer"></div>
+        </div>
+
+        <footer>
+            <p>Research presentation created with Arduino Reaction Timer</p>
+            <p>Data collected: January 2026</p>
+        </footer>
+    </div>
+
+    <script>
+        // Load data from JSON
+        let data = null;
+
+        fetch('data.json')
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to load data.json');
+                return response.json();
+            })
+            .then(json => {
+                data = json;
+                initializePresentation();
+            })
+            .catch(error => {
+                console.error('Error loading data:', error);
+                document.getElementById('loading').innerHTML = '❌ Error loading data. Make sure data.json is in the same directory.';
+            });
+
+        // Utility functions
+        function calculateStats(arr) {
+            const sorted = [...arr].sort((a, b) => a - b);
+            const sum = arr.reduce((a, b) => a + b, 0);
+            const mean = sum / arr.length;
+            const median = sorted.length % 2 === 0 
+                ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2 
+                : sorted[Math.floor(sorted.length / 2)];
+            const stdDev = Math.sqrt(
+                arr.reduce((sq, n) => sq + Math.pow(n - mean, 2), 0) / arr.length
+            );
+            return {
+                mean: Math.round(mean),
+                median: Math.round(median),
+                min: Math.min(...arr),
+                max: Math.max(...arr),
+                stdDev: Math.round(stdDev)
+            };
+        }
+
+        function initializePresentation() {
+            // Hide loading
+            document.getElementById('loading').style.display = 'none';
+
+            // Show content
+            document.getElementById('header').style.display = 'block';
+            document.getElementById('statsContainer').style.display = 'grid';
+            document.getElementById('chartsSection').style.display = 'grid';
+            document.getElementById('dataTable').style.display = 'block';
+            document.getElementById('insightsSection').style.display = 'block';
+
+            // Update header
+            document.getElementById('title').textContent = '🎯 ' + data.study.title;
+            document.getElementById('subtitle').textContent = data.study.subtitle;
+            document.getElementById('description').textContent = data.study.description;
+
+            const gamerValues = Object.values(data.gamers);
+            const nonGamerValues = Object.values(data.nonGamers);
+            const gamerStats = calculateStats(gamerValues);
+            const nonGamerStats = calculateStats(nonGamerValues);
+            const allValues = [...gamerValues, ...nonGamerValues];
+            const allStats = calculateStats(allValues);
+
+            populateStats(allStats, gamerStats, nonGamerStats);
+            populateTable(data.gamers, data.nonGamers);
+            populateInsights(gamerStats, nonGamerStats, allStats);
+            createCharts(gamerValues, nonGamerValues, gamerStats, nonGamerStats);
+        }
+
+        // Populate Statistics Cards
+        function populateStats(allStats, gamerStats, nonGamerStats) {
+            const improvement = Math.round((nonGamerStats.mean / gamerStats.mean - 1) * 100);
+            const statsHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${allStats.mean}</div>
+                    <div class="stat-label">Average (All)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${gamerStats.mean}</div>
+                    <div class="stat-label">Gamers Avg</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${nonGamerStats.mean}</div>
+                    <div class="stat-label">Non-Gamers Avg</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${allStats.min}</div>
+                    <div class="stat-label">Best Time</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${allStats.max}</div>
+                    <div class="stat-label">Worst Time</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${improvement}%</div>
+                    <div class="stat-label">Gamer Advantage</div>
+                </div>
+            `;
+            document.getElementById('statsContainer').innerHTML = statsHTML;
+        }
+
+        // Populate Table
+        function populateTable(gamers, nonGamers) {
+            const allData = [
+                ...Object.entries(nonGamers).map(([name, time]) => ({ name, time, group: 'Non-Gamer' })),
+                ...Object.entries(gamers).map(([name, time]) => ({ name, time, group: 'Gamer' }))
+            ].sort((a, b) => a.time - b.time);
+
+            const tableHTML = allData.map(item => {
+                const className = item.group === 'Gamer' ? 'gamer' : 'non-gamer';
+                const badge = item.group === 'Gamer' 
+                    ? '<span class="badge badge-gamer">Gamer</span>' 
+                    : '<span class="badge badge-non-gamer">Non-Gamer</span>';
+                const performance = item.time < 250 ? '⚡ Excellent' : item.time < 350 ? '✅ Good' : '⏱️ Average';
+                return `
+                    <tr class="${className}">
+                        <td><strong>${item.name}</strong>${badge}</td>
+                        <td>${item.group}</td>
+                        <td>${item.time} ms</td>
+                        <td>${performance}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('tableBody').innerHTML = tableHTML;
+        }
+
+        // Populate Insights
+        function populateInsights(gamerStats, nonGamerStats, allStats) {
+            const improvement = Math.round((nonGamerStats.mean / gamerStats.mean - 1) * 100);
+            const insightsHTML = `
+                <div class="insight-item">
+                    <div class="insight-label">📊 Overall Average Reaction Time</div>
+                    <div class="insight-value">${allStats.mean} ms ± ${allStats.stdDev} ms (standard deviation)</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">🎮 Gamer Performance</div>
+                    <div class="insight-value">Average: ${gamerStats.mean} ms | Range: ${gamerStats.min}-${gamerStats.max} ms | Median: ${gamerStats.median} ms</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">👥 Non-Gamer Performance</div>
+                    <div class="insight-value">Average: ${nonGamerStats.mean} ms | Range: ${nonGamerStats.min}-${nonGamerStats.max} ms | Median: ${nonGamerStats.median} ms</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">⚡ Key Finding</div>
+                    <div class="insight-value">Gamers are <strong>${improvement}% faster</strong> on average than non-gamers (${nonGamerStats.mean}ms vs ${gamerStats.mean}ms)</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">🏆 Top 3 Best Performers</div>
+                    <div class="insight-value">1. Dominik (189 ms) 🎮 | 2. Johannes (236 ms) 🎮 | 3. Aloki (243 ms) 🎮</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">📈 Sample Size & Consistency</div>
+                    <div class="insight-value">6 gamers + 6 non-gamers = 12 participants | Gamer consistency: ±${gamerStats.stdDev}ms | Non-gamer consistency: ±${nonGamerStats.stdDev}ms</div>
+                </div>
+            `;
+            document.getElementById('insightsContainer').innerHTML = insightsHTML;
+        }
+
+        // Create Charts
+        function createCharts(gamerValues, nonGamerValues, gamerStats, nonGamerStats) {
+            // Bar Chart
+            const ctx1 = document.getElementById('barChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Gamers', 'Non-Gamers'],
+                    datasets: [{
+                        label: 'Average Reaction Time (ms)',
+                        data: [gamerStats.mean, nonGamerStats.mean],
+                        backgroundColor: ['#667eea', '#f59e0b'],
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 600 } }
+                }
+            });
+
+            // Scatter Chart
+            const ctx2 = document.getElementById('lineChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Gamers',
+                            data: gamerValues.map((v, i) => ({ x: i + 1, y: v })),
+                            backgroundColor: '#667eea',
+                            borderColor: '#667eea',
+                            showLine: false,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Non-Gamers',
+                            data: nonGamerValues.map((v, i) => ({ x: i + 7, y: v })),
+                            backgroundColor: '#f59e0b',
+                            borderColor: '#f59e0b',
+                            showLine: false,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true } },
+                    scales: { y: { beginAtZero: true, max: 600 } }
+                }
+            });
+
+            // Radar Chart
+            const ctx3 = document.getElementById('radarChart').getContext('2d');
+            new Chart(ctx3, {
+                type: 'radar',
+                data: {
+                    labels: ['Mean', 'Median', 'Min', 'Max'],
+                    datasets: [
+                        {
+                            label: 'Gamers (ms)',
+                            data: [gamerStats.mean, gamerStats.median, gamerStats.min, gamerStats.max],
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Non-Gamers (ms)',
+                            data: [nonGamerStats.mean, nonGamerStats.median, nonGamerStats.min, nonGamerStats.max],
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { r: { beginAtZero: true, max: 600 } }
+                }
+            });
+
+            // Pie Chart
+            const ctx4 = document.getElementById('pieChart').getContext('2d');
+            new Chart(ctx4, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Gamers', 'Non-Gamers'],
+                    datasets: [{
+                        data: [gamerValues.length, nonGamerValues.length],
+                        backgroundColor: ['#667eea', '#f59e0b'],
+                        borderColor: 'white',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
