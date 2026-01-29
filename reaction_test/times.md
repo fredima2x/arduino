@@ -10,8 +10,8 @@
 
 ### Gamer:
 **Frederick:** 248
-**Tom:** 299, 
+**Tom:** 299, 204, 231, 232
 **Aloki:** 243
-**Johannes:** 236
+**Johannes:** 236, 216, 274, 408
 **Dominik:** 189
 **Dimitri:** 393, 244
