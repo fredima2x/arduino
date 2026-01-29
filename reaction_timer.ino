@@ -1,5 +1,5 @@
-#include <Wire.h> // Wire Bibliothek einbinden
-#include <LiquidCrystal_I2C.h> // Vorher hinzugefügte LiquidCrystal_I2C Bibliothek
+#include <Wire.h> // include Wire library
+#include <LiquidCrystal_I2C.h> // LiquidCrystal_I2C library
 #include <WiFi.h>
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
